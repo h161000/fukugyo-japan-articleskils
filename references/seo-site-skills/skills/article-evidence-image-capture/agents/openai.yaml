@@ -1,0 +1,4 @@
+interface:
+  display_name: "記事証拠画像キャプチャ"
+  short_description: "本文の根拠箇所を赤枠付きWebP画像として保存する"
+  default_prompt: "Use $article-evidence-image-capture to capture article evidence, mark the exact supporting text with red boxes, and save WordPress-ready WebP images."

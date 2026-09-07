@@ -1,0 +1,33 @@
+{
+  "plugins": {
+    "@textlint/markdown": {
+      "extensions": [".mdx"]
+    }
+  },
+  "rules": {
+    "preset-japanese": {
+      "sentence-length": false,
+      "no-doubled-joshi": false,
+      "max-ten": false
+    },
+    "sentence-length": {
+      "max": 80
+    },
+    "no-doubled-joshi": {
+      "strict": false,
+      "allow": ["は", "も", "で", "が", "に", "を"]
+    },
+    "no-double-negative-ja": true,
+    "no-dropping-the-ra": true,
+    "max-ten": {
+      "max": 3
+    },
+    "no-mix-dearu-desumasu": {
+      "preferInHeader": "である",
+      "preferInBody": "ですます",
+      "strict": false
+    },
+    "no-consecutive-same-endings": true,
+    "ng-words": true
+  }
+}

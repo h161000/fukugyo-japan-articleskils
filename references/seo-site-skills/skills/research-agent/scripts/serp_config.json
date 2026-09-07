@@ -1,0 +1,9 @@
+{
+  "serper_api_key": "ここにSerper APIのキーを入力",
+  "target_domains": [
+    "fukugyo-check.jp"
+  ],
+  "country": "jp",
+  "language": "ja",
+  "注意": "serper_api_key は https://serper.dev/ で無料取得できます（月2500回まで無料）"
+}

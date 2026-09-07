@@ -1,0 +1,24 @@
+{
+  "sourceRepository": "/Users/hirototakada/SEO/seo-site-skills",
+  "sourceCommit": "3d07729f6cb4250012f6b2ead78c3530da99c15a",
+  "capturedAt": "2026-09-03",
+  "runtimeUsesSourceRepository": false,
+  "included": [
+    "check-article.sh",
+    "docs/design-guide.md",
+    "docs/full-workflow.md",
+    "docs/seo-requirements.md",
+    "skills/_setup",
+    "skills/article-evidence-image-capture",
+    "skills/character-creator",
+    "skills/competitor-check",
+    "skills/critic",
+    "skills/line-cvr",
+    "skills/research-agent",
+    "skills/scripts",
+    "skills/seo-eeat-check",
+    "skills/writing-agent"
+  ],
+  "snapshotSha256": "cb78608fc6770a2f9be8d1a751532e21902800538335abd1f6d407082af1be26",
+  "fileCount": 40
+}

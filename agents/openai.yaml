@@ -1,0 +1,4 @@
+interface:
+  display_name: "fukugyojapanarticle"
+  short_description: "副業JAPAN向けにフジ名義のSEO検証記事・画像・MDXを作成"
+  default_prompt: "$fukugyojapanarticle を使って、指定した案件の副業JAPAN向けSEO検証記事を作成してください。"
