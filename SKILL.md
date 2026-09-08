@@ -23,27 +23,33 @@ description: 副業JAPAN向けの新規SEO検証記事を、iHubのtask ID・サ
 
 実行時に`/Users/hirototakada/SEO/seo-site-skills`を参照しない。コピー元の別スキルや他サイトの既存記事の制作ルールも上位ルールとして使わない。
 
-## 必読ルート
+## 実行開始・工程別の必読ルート
 
-新規記事ごとに、必要な正本を省略せず読み直す。
+最初に今回の依頼範囲を確定する。記事作成では以下を適用する。修正案の提示やスキル設定の修正だけの依頼では、案件取得・記事制作の工程を開始しない。
 
-1. `references/fukugyojapan-adapter.md`
-2. `references/fukugyojapan-editorial-rules.md`
-3. `references/seo-site-skills/skills/research-agent/SKILL.md`
-4. `references/seo-site-skills/skills/research-agent/references/ad-keywords.md`
-5. `references/seo-site-skills/skills/writing-agent/SKILL.md`
-6. `references/seo-site-skills/skills/writing-agent/references/article-types.md`
-7. `references/seo-site-skills/skills/writing-agent/references/ng-words.md`
-8. `references/seo-site-skills/skills/writing-agent/references/mdx-components.md`
-9. `references/seo-site-skills/skills/writing-agent/references/human-voice.md`
-10. `references/seo-site-skills/skills/line-cvr/SKILL.md`
-11. CTA型決定後の`references/seo-site-skills/skills/line-cvr/references/closing-templates.md`
-12. `references/seo-site-skills/skills/line-cvr/references/writing-examples.md`
-13. `references/seo-site-skills/docs/design-guide.md`
-14. `references/seo-site-skills/skills/critic/SKILL.md`
-15. `references/character-workflow.md`と、同工程で作成・確定したフジのペルソナ
+新規記事ごとに正本を読み直す。会話にこのSKILL.md全文が提供されていても、参照資料は別途全文を読む。省略・切断された出力は分割して残りを取得する。子スキルが対象工程で必読とする参照も追加する。資料の要約や読了記録は原文の代わりにならない。
 
-証拠画像を扱うときは`references/seo-site-skills/skills/article-evidence-image-capture/SKILL.md`も読む。アイキャッチを作成または差し替えるときは`references/eyecatch-rules.md`を読み、`seo-article-to-mdx`のアイキャッチ工程から`create-seo-fuji-eyecatch`へ進む。本番公開を依頼された場合だけ`references/publish-workflow.md`を読む。
+起動時に`references/workflow-state.md`を読み、次表と`references/workflow-manifest.json`の正確なパスを確認する。相対パスは本スキルルート基準。表は読む期限を示し、原文の読み込みを省略するための要約ではない。
+
+| 工程ID | 開始前に全文を読む資料 | 終了条件 |
+|---|---|---|
+| intake | 本SKILL、workflow-state、adapter、editorial-rules、character-workflow、personas/fuji | 依頼範囲・対象案件・資料取得者を確定しcase-info.jsonへ保存 |
+| research | 同梱research-agent、同references/ad-keywords | 調査根拠・未確認事項・Ahrefs結果・メインKWを保存 |
+| cta | 同梱line-cvr、型決定後にclosing-templates、writing-examples | 型番号・判定KW・読者状態をoutlineとreview-reportへ記録 |
+| writing | 同梱writing-agent、同referencesのarticle-types・ng-words・mdx-components・human-voice、docs/design-guide、critic、フジのペルソナ、line-cta | 構成と根拠に対応したAstro MDXを作成 |
+| images | 同梱article-evidence-image-capture、eyecatch-rules、同資料が指定する専用スキルと画像生成スキル | 証拠画像・出典・配置・alt・アイキャッチを完成 |
+| review | 同梱critic・seo-eeat-check・competitor-check、ペルソナ、publish-workflow | 指摘反映・全必須検査・375px表示確認を完了 |
+| publish | publish-workflow（本番公開の依頼時のみ工程実行） | 本番・画像・サイトマップ確認後にiHubのarticleUrlだけ更新 |
+
+`critic`はwriting-agentの必読指定に従い、レビュー時まで読み込みを遅らせず執筆前に読む。証拠画像を調査中に取得する場合は、その取得前に画像用資料を読む。フジ設定の初回作成・変更時だけ同梱`character-creator/SKILL.md`も読む。
+
+ローカル表示または本番公開を実行する前に`references/publish-workflow.md`を読む。作成依頼でも工程6の表示検査には同資料を使用するが、公開の許可にはならない。
+
+各工程の開始前・終了時にworkflow Gateを実行する。未読・必須成果物の欠落・必須検査の未実施がある工程を完了にしない。通常の読み込みと工程移行は自律的に行い、承認待ちを追加しない。取得不能は復旧を試み、解消しなければ未完了の工程と理由を報告する。
+
+同梱research-agent・writing-agent等は、主担当が指示書として実行する。criticレビューは独立したサブエージェント1名へ委譲する。入力は対象MDX、facts、outline、フジのペルソナ、本スキルの優先ルール、critic原文。出力をcritic-review.mdへ保存し、主担当が指摘を反映してreview-report.mdへ対応を記録する。1周で終える。委譲機能が使えない場合は自己レビューを独立レビュー済みと扱わず、未完了として報告する。
+
+サイト側のAGENTS.mdや検査と本スキルの適用規則に不整合があれば、双方の該当箇所・適用根拠・代替検査をreview-reportへ記録する。検査全体を黙って無効化しない。上位指示に従い、明示された適用除外以外のFAILは修正する。
 
 ## 作業場所と成果物
 
@@ -51,6 +57,7 @@ description: 副業JAPAN向けの新規SEO検証記事を、iHubのtask ID・サ
 
 ```text
 /Users/hirototakada/SEO/seo-articlework/hukugyojapan/<slug>/
+├── workflow-state.json
 ├── case-info.json
 ├── facts.md
 ├── research_notes.json
@@ -113,6 +120,8 @@ CTAは`ArticleLayout.astro`と`Balloon.astro`に自動表示を任せる。記�
 
 次をすべて通す。違反があれば本文または成果物を直し、該当検査を再実行する。
 
+工程の必読資料・成果物・検査証跡は`references/workflow-state.md`のGateでも確認する。読了・問題なしという自己申告だけでは合格にしない。調査根拠、CTA型の理由、critic指摘と対応、導入レビューの実内容を照合する。workflow Gateは既存の品質検査を置き換えない。
+
 1. フジペルソナ、`writing-agent`、`human-voice`、`line-cvr`への文体・CTA準拠確認
 2. `critic`の1周レビューと指摘反映
 3. textlint
@@ -155,7 +164,7 @@ CTA検査は`references/line-cta.md`に従い、レンダリング後の表示�
 
 ## 完了条件
 
-- 必須成果物と公開用MDX・画像がある。
+- 必須成果物と公開用MDX・画像があり、依頼範囲のworkflow Gateが合格している。
 - Ahrefsを含む調査、CTA型判定、準拠Gate、機械検査、表示確認が完了している。
 - 未確認情報を事実として書いていない。
 - ローカル表示依頼では記事がHTTP 200で表示され、サーバーが稼働中である。

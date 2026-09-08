@@ -1,18 +1,17 @@
 # 副業JAPANのアイキャッチ工程
 
-ユーザー指定の`seo-article-to-mdx`と同じアイキャッチ工程を使う。
+専用スキル`create-seo-fuji-eyecatch`へ直接接続する。デザインと保存仕様は同スキル、記事原稿の正本と接続仕様は本資料に従う。
 
 ## 参照順
 
-1. `/Users/hirototakada/.codex/skills/seo-article-to-mdx/SKILL.md`のアイキャッチ工程を確認する。
-2. 同工程が指定する`/Users/hirototakada/.agents/skills/create-seo-fuji-eyecatch/SKILL.md`を全文読む。
-3. 専用スキルの`references/eyecatch-rules.md`と、利用可能な画像生成スキルを読む。
+1.`/Users/hirototakada/.agents/skills/create-seo-fuji-eyecatch/SKILL.md`を全文読む。
+2. 専用スキルの`references/eyecatch-rules.md`と、利用可能な画像生成スキルを読む。
 
 デザインは専用スキルの生成り×朱赤×チャコール、1672×941pxを適用する。同梱正本のアイキャッチ規定より本工程を優先する。コピー時に残した`assets/navy-gold-reference.webp`と`scripts/finalize_eyecatch.sh`はこのスキルから使用しない。
 
 ## 原稿と保存先の接続
 
-本文制作の正本は本スキルの`article-draft.mdx`を維持する。アイキャッチ工程のためだけに`seo-article-to-mdx`の調査・本文制作を開始しない。
+本文制作の正本は本スキルの`article-draft.mdx`を維持する。専用スキル内の`seo-article-to-mdx`が決めるslugは本スキルの確定slugに、Markdown正本・変換器の手順は以下の同期・Astro MDX検査に置き換える。アイキャッチ工程のためだけに`seo-article-to-mdx`の調査・本文制作を開始しない。
 
 - 専用スキルの作業先は`/Users/hirototakada/SEO/seo-articlework/hukugyojapan/<slug>/`。本スキルと同じ作業先を使い、確定稿`article-draft.mdx`からアイキャッチ工程用の`article-draft.md`を同期する。`facts.md`、`outline.md`、画像素材・出典記録は同じ案件フォルダ内のものを参照する。既存の別案件ファイルを上書きしない。
 - 専用スキルの保存スクリプトを使用する。公開画像は`/Users/hirototakada/SEO/fukugyojapan/public/images/<slug>-eyecatch.webp`へ置く。

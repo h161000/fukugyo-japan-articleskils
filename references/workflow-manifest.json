@@ -1,0 +1,128 @@
+{
+  "intake": {
+    "reads": [
+      "SKILL.md",
+      "references/workflow-state.md",
+      "references/fukugyojapan-adapter.md",
+      "references/fukugyojapan-editorial-rules.md",
+      "references/character-workflow.md",
+      "references/personas/fuji.md"
+    ],
+    "outputs": [
+      "case-info.json"
+    ],
+    "checks": [
+      "identity"
+    ]
+  },
+  "research": {
+    "reads": [
+      "references/seo-site-skills/skills/research-agent/SKILL.md",
+      "references/seo-site-skills/skills/research-agent/references/ad-keywords.md"
+    ],
+    "outputs": [
+      "facts.md",
+      "research_notes.json"
+    ],
+    "checks": [
+      "sources",
+      "ahrefs",
+      "main-keyword"
+    ]
+  },
+  "cta": {
+    "reads": [
+      "references/seo-site-skills/skills/line-cvr/SKILL.md",
+      "references/seo-site-skills/skills/line-cvr/references/closing-templates.md",
+      "references/seo-site-skills/skills/line-cvr/references/writing-examples.md"
+    ],
+    "outputs": [
+      "outline.md"
+    ],
+    "checks": [
+      "cta-choice"
+    ]
+  },
+  "writing": {
+    "reads": [
+      "references/seo-site-skills/skills/writing-agent/SKILL.md",
+      "references/seo-site-skills/skills/writing-agent/references/article-types.md",
+      "references/seo-site-skills/skills/writing-agent/references/ng-words.md",
+      "references/seo-site-skills/skills/writing-agent/references/mdx-components.md",
+      "references/seo-site-skills/skills/writing-agent/references/human-voice.md",
+      "references/seo-site-skills/docs/design-guide.md",
+      "references/seo-site-skills/skills/critic/SKILL.md",
+      "references/personas/fuji.md",
+      "references/line-cta.md"
+    ],
+    "outputs": [
+      "article-draft.mdx",
+      "outline.md"
+    ],
+    "checks": [
+      "draft"
+    ]
+  },
+  "images": {
+    "reads": [
+      "references/seo-site-skills/skills/article-evidence-image-capture/SKILL.md",
+      "references/eyecatch-rules.md",
+      "/Users/hirototakada/.agents/skills/create-seo-fuji-eyecatch/SKILL.md",
+      "/Users/hirototakada/.agents/skills/create-seo-fuji-eyecatch/references/eyecatch-rules.md"
+    ],
+    "outputs": [
+      "images/evidence-webp/README.md",
+      "assets/eyecatch/{slug}-eyecatch.webp"
+    ],
+    "checks": [
+      "evidence-images",
+      "eyecatch",
+      "imagegen-skill"
+    ]
+  },
+  "review": {
+    "reads": [
+      "references/seo-site-skills/skills/critic/SKILL.md",
+      "references/seo-site-skills/skills/seo-eeat-check/SKILL.md",
+      "references/seo-site-skills/skills/competitor-check/SKILL.md",
+      "references/personas/fuji.md",
+      "references/publish-workflow.md"
+    ],
+    "outputs": [
+      "critic-review.md",
+      "review-report.md"
+    ],
+    "checks": [
+      "critic",
+      "critic-response",
+      "style-cta",
+      "intro-review",
+      "textlint",
+      "editorial",
+      "article",
+      "line-cv",
+      "images",
+      "eeat",
+      "competitor",
+      "astro-build",
+      "viewport-375",
+      "rendered-cta",
+      "draft-sync"
+    ]
+  },
+  "publish": {
+    "reads": [
+      "references/publish-workflow.md"
+    ],
+    "outputs": [
+      "production-verification.json"
+    ],
+    "checks": [
+      "authorization",
+      "commit-push",
+      "production",
+      "sitemap",
+      "ihub-article-url-only"
+    ]
+  }
+}
