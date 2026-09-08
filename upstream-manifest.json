@@ -19,6 +19,16 @@
     "skills/seo-eeat-check",
     "skills/writing-agent"
   ],
-  "snapshotSha256": "cb78608fc6770a2f9be8d1a751532e21902800538335abd1f6d407082af1be26",
-  "fileCount": 40
+  "snapshotSha256": "b43980e46c8f159ff2ae7e248ff3d8b2592b7f544b2ffd71c039365b0b4089f8",
+  "fileCount": 40,
+  "localRevision": {
+    "date": "2026-09-08",
+    "reason": "ユーザー承認により導入の情報量・意味重複・部分修正後レビューを強化",
+    "modifiedSnapshotFiles": [
+      "skills/writing-agent/SKILL.md"
+    ],
+    "previousRecordedSha256": "cb78608fc6770a2f9be8d1a751532e21902800538335abd1f6d407082af1be26",
+    "observedBeforeRevisionSha256": "73f389bae571f351d0b0f62b1cad934afdd782f5311e5ce14fbb93cd0809203a",
+    "note": "修正前から記録ハッシュと実ファイルが不一致。sourceCommit/capturedAtは元取得情報として保持し、snapshotSha256は現行同梱内容を検証する値へ更新。"
+  }
 }
