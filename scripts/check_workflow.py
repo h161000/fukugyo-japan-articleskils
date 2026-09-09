@@ -3,12 +3,16 @@
 import argparse
 from datetime import datetime, timezone
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = json.loads((ROOT / 'references/workflow-manifest.json').read_text())
+EDITORIAL_SPEC = importlib.util.spec_from_file_location('workflow_editorial', ROOT / 'scripts/check_fukugyojapan_editorial.py')
+EDITORIAL = importlib.util.module_from_spec(EDITORIAL_SPEC)
+EDITORIAL_SPEC.loader.exec_module(EDITORIAL)
 
 def digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -75,6 +79,16 @@ def validate(state, stage, mode):
             require(p.is_absolute() and p.is_file(), f'{name}/{check}: 証跡ファイルなし')
             if p.is_file():
                 require(p.stat().st_size > 0 and rec.get('sha256') == digest(p), f'{name}/{check}: 証跡空/更新後の再確認なし')
+        if name == 'review':
+            review_path = work / 'editorial-review.json'
+            rec = item['checks'].get('wording-review', {})
+            require(rec.get('evidence') == str(review_path), 'review/wording-review: 専用JSONを証跡にしてください')
+            try:
+                article_text = (work / 'article-draft.mdx').read_bytes().decode('utf-8')
+                wording_review = json.loads(review_path.read_text())
+                errors.extend('review/wording-review: ' + message for message in EDITORIAL.validate_wording_review(article_text, wording_review))
+            except (OSError, ValueError, TypeError, KeyError) as exc:
+                errors.append(f'review/wording-review: 証跡を検証できません: {exc}')
         for ex in item.get('exceptions', []):
             require(all(ex.get(k) for k in ('rule_source', 'reason', 'replacement_check')), f'{name}: 適用除外の根拠不足')
             require(item['checks'].get(ex.get('replacement_check'), {}).get('status') == 'pass', f'{name}: 代替検査未完了')

@@ -34,6 +34,16 @@ class WorkflowGateTests(unittest.TestCase):
                 checks={c:dict(status='pass', detail='対象根拠の照合結果', evidence=str(proof), sha256=gate.digest(proof)) for c in item['checks']},
                 unresolved=[], exceptions=[])
 
+        draft = work / 'article-draft.mdx'
+        draft.write_text('総額が公開されていないので契約を見送ります。')
+        self.proof = work / 'editorial-review.json'
+        review = gate.EDITORIAL.make_wording_review(draft.read_text())
+        review['full_text_review']['scopes'] = list(gate.EDITORIAL.REVIEW_SCOPES)
+        for rule, check in review['full_text_review']['checks'].items():
+            check.update(status='pass', detail=f'{rule}: 「総額が公開されていないので契約を見送ります」を照合し、調査事実と筆者の判断を分けた。')
+        self.proof.write_text(json.dumps(review, ensure_ascii=False))
+        self.state['stages']['review']['checks']['wording-review'].update(evidence=str(self.proof), sha256=gate.digest(self.proof))
+
     def test_complete_and_publish_scope(self):
         self.assertEqual(gate.validate(self.state, 'review', 'complete'), [])
         self.assertTrue(gate.validate(self.state, 'publish', 'complete'))
@@ -68,6 +78,21 @@ class WorkflowGateTests(unittest.TestCase):
     def test_exception_needs_replacement(self):
         self.state['stages']['review']['exceptions'] = [dict(rule_source='rule', reason='reason', replacement_check='missing')]
         self.assertTrue(gate.validate(self.state, 'review', 'complete'))
+
+    def test_wording_status_alone_does_not_bypass_pending_review(self):
+        review = json.loads(self.proof.read_text())
+        review['full_text_review']['checks']['consultation']['status'] = 'pending'
+        self.proof.write_text(json.dumps(review))
+        self.state['stages']['review']['checks']['wording-review']['sha256'] = gate.digest(self.proof)
+        self.assertTrue(any('wording-review' in x for x in gate.validate(self.state, 'review', 'complete')))
+
+    def test_wording_checks_source_even_if_evidence_hash_is_current(self):
+        (Path(self.state['articlework']) / 'article-draft.mdx').write_text('私のLINEでも一緒に確認できます。')
+        self.assertTrue(any('wording-review' in x for x in gate.validate(self.state, 'publish', 'ready')))
+
+    def test_wording_record_cannot_be_replaced_with_generic_log(self):
+        self.state['stages']['review']['checks']['wording-review'] = copy.deepcopy(self.state['stages']['review']['checks']['critic'])
+        self.assertTrue(any('専用JSON' in x for x in gate.validate(self.state, 'review', 'complete')))
 
 if __name__ == '__main__':
     unittest.main()

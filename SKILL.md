@@ -106,6 +106,8 @@ LP・LINE資料の取得者と制作担当への提供経路は、`references/fu
 
 フジのペルソナを読み、本文と吹き出しへ反映する。見出しはSEO用の標準表現とし、キャラ口調を入れない。
 
+`references/fukugyojapan-editorial-rules.md`の「判断・調査結果・相談案内を明確にする」と「文章表現の横断レビュー」を執筆時から適用する。判断の先送り、調査前に見える予告、希望形だけの提案、遠回しな相談案内、比較例と前後のつながりを、記事全体で確認する。
+
 ### 5. CTA・画像・アイキャッチを完成させる
 
 CTA文言は`line-cvr`へ従い、表示には現在の副業JAPANの共通画像と自動挿入コンポーネントを使う。`references/line-cta.md`を必読とする。記事固有性はCTA前後の文章、読者状態、記事内の根拠で作る。
@@ -125,7 +127,7 @@ CTAは`ArticleLayout.astro`と`Balloon.astro`に自動表示を任せる。記�
 1. フジペルソナ、`writing-agent`、`human-voice`、`line-cvr`への文体・CTA準拠確認
 2. `critic`の1周レビューと指摘反映
 3. textlint
-4. `python3 /Users/hirototakada/.codex/skills/fukugyojapanarticle/scripts/check_fukugyojapan_editorial.py src/content/articles/<slug>.mdx`
+4. `python3 /Users/hirototakada/.codex/skills/fukugyojapanarticle/scripts/check_fukugyojapan_editorial.py src/content/articles/<slug>.mdx --review <ARTICLEWORK>/editorial-review.json`（雛形作成・判定は文章ルールの「文章表現の横断レビュー」に従う）
 5. 同梱`references/seo-site-skills/check-article.sh`（副業JAPANのサイトルートから実行）
 6. 同梱`references/seo-site-skills/skills/scripts/check-line-cv.sh`
 7. 同梱`references/seo-site-skills/skills/scripts/check-images.sh`
@@ -139,6 +141,23 @@ CTA検査は`references/line-cta.md`に従い、レンダリング後の表示�
 `kensho`では、正本の型別基準である画像10枚以上・各H2に画像・吹き出し8個以上・LINE誘導3個以上を満たす。LINE誘導の数はMDXのタグ数ではなく、自動表示後の記事本文内で確認する。
 
 記事全体の判断文の語順と、資料取得者・本文の一人称の一致も、`references/fukugyojapan-editorial-rules.md`の納品前Gateに従って確認し、`review-report.md`へ記録する。
+
+#### 文章表現の横断レビュー
+
+`references/fukugyojapan-editorial-rules.md`の5観点を、独立criticへ渡す前と指摘反映後に確認する。独立criticへの入力にもこの観点を含めるが、1周制は維持する。最終原稿の`editorial-review.json`を作成し、`wording-review`を必須検査として記録する。検出候補が0件でも全文の意味確認を省略しない。
+
+ユーザーが一文を修正した場合も、その意図に当たる箇所を同じ記事の全体で確認する。修正範囲の限定指示を優先し、前後2段落・関連する吹き出し・導入全体の再読と記録は文章ルールに従う。
+
+#### 結論・締め・吹き出しの必須レビュー
+
+`references/fukugyojapan-editorial-rules.md`の「結論と締めの完成条件」と`references/character-workflow.md`の「吹き出し画像」を執筆・レビューに適用する。
+
+- 最初の結論には判断、具体的な理由一覧、理由が判断にどう関わるかの説明をそろえてから、共感・相談案内へ進む。
+- 最後のH2では本文の主要な理由を振り返り、読者が取る判断を伝えてから、選定済みCTA型へつなぐ。
+- 理由を一文で触れただけ、画像だけ、共感と相談案内だけでは完成扱いにしない。理由一覧の存在だけでも合格にしない。
+- `conclusion-review`・`closing-review`・`balloon-avatar`を必須検査として記録する。詳しい証跡はworkflow-stateの追加検査規定に従う。
+- 独立criticへの入力に、この完成条件を含める。既存の根拠不足・文脈・LINE誘導の観点で確認させ、主担当も最終原稿との対応を確認する。criticの1周制は維持する。
+- フジの全吹き出しで顔画像を明示し、機械検査と実表示で画像指定・存在・読み込みを確認する。
 
 #### 導入の内容レビュー
 

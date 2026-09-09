@@ -20,7 +20,7 @@ class CheckFukugyojapanEditorialTests(unittest.TestCase):
     def test_accepts_preferred_wording_and_caption(self):
         text = "\n".join(
             [
-                "そこで、口コミを次の3つの観点から確認します。",
+                "調べて分かった口コミの内容をお伝えします。",
                 "実際の案内を時系列で並べると、次のとおりです。",
                 "副業情報をLINEで共有しています。",
                 "![確認画面](/images/example.webp)",
