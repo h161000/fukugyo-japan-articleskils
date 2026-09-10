@@ -90,6 +90,25 @@ class WorkflowGateTests(unittest.TestCase):
         (Path(self.state['articlework']) / 'article-draft.mdx').write_text('私のLINEでも一緒に確認できます。')
         self.assertTrue(any('wording-review' in x for x in gate.validate(self.state, 'publish', 'ready')))
 
+    def test_missing_intro_connection_blocks_gate_even_with_current_hash(self):
+        review = json.loads(self.proof.read_text())
+        del review['full_text_review']['checks']['intro-connection']
+        self.proof.write_text(json.dumps(review))
+        self.state['stages']['review']['checks']['wording-review']['sha256'] = gate.digest(self.proof)
+        self.assertTrue(any('intro-connection' in x for x in gate.validate(self.state, 'review', 'complete')))
+
+    def test_published_site_name_blocks_gate_even_with_pass_records(self):
+        draft = Path(self.state['articlework']) / 'article-draft.mdx'
+        text = 'レビューサイト「ジョブネットワークセンター」には、購入者と名乗る投稿もありました。'
+        draft.write_text(text)
+        review = gate.EDITORIAL.make_wording_review(text)
+        review['full_text_review']['scopes'] = list(gate.EDITORIAL.REVIEW_SCOPES)
+        for value in review['full_text_review']['checks'].values():
+            value.update(status='pass', detail='既存の合格記録をコピーしたという不適切な判定。')
+        self.proof.write_text(json.dumps(review))
+        self.state['stages']['review']['checks']['wording-review']['sha256'] = gate.digest(self.proof)
+        self.assertTrue(any('第三者レビューサイト名' in x for x in gate.validate(self.state, 'publish', 'ready')))
+
     def test_wording_record_cannot_be_replaced_with_generic_log(self):
         self.state['stages']['review']['checks']['wording-review'] = copy.deepcopy(self.state['stages']['review']['checks']['critic'])
         self.assertTrue(any('専用JSON' in x for x in gate.validate(self.state, 'review', 'complete')))

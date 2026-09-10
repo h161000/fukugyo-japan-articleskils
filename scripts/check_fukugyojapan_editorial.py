@@ -59,9 +59,30 @@ def check_structure(text: str, site_root: Path | None = None) -> list[str]:
     return errors
 
 
+THIRD_PARTY_SITE_NAMES = ("ジョブネットワークセンター", "副レポ")
+
+
+def check_source_names(text: str) -> list[str]:
+    """公開文章の既知名を検出。調査記録やリンク先URLは変更しない。"""
+    def blank(match):
+        return re.sub(r"[^\n]", " ", match.group(0))
+    source = re.sub(r"^[ \t]*(`{3,}|~{3,})[^\n]*\n.*?^[ \t]*\1[^\n]*(?:\n|$)", blank, text, flags=re.M | re.S)
+    source = re.sub(r"<!--.*?-->|\{/\*.*?\*/\}", blank, source, flags=re.S)
+    errors = []
+    for match in re.finditer(r"\S[\s\S]*?(?=\n[ \t]*\n|\Z)", source):
+        if match.group(0).startswith(("import ", "export ")):
+            continue
+        plain = visible_text(match.group(0))
+        for name in THIRD_PARTY_SITE_NAMES:
+            if name in plain:
+                line = source[:match.start()].count("\n") + 1
+                errors.append(f"L{line}: 第三者レビューサイト名「{name}」が公開文に残っています。「第三者サイト」等で表記し、実名とURLは調査記録に保持してください")
+    return errors
+
+
 def check_text(text: str) -> list[str]:
     """検査違反を人が修正できるメッセージとして返す。"""
-    errors: list[str] = []
+    errors: list[str] = check_source_names(text)
     lines = text.splitlines()
 
     for old, new in BANNED_PHRASES.items():
@@ -128,6 +149,7 @@ WORDING_RULES = {
         "比較例を読者が理解できる文として完結させ、後続の説明につなぐ。実際の質問は一律に禁止しない。",
     ),
 }
+REVIEW_CHECKS = (*WORDING_RULES, "intro-premise", "intro-connection", "source-naming")
 REVIEW_SCOPES = ("intro", "headings", "body", "balloons", "consultation", "closing")
 GENERIC_REVIEW_NOTES = {"問題なし", "確認済み", "対象外", "なし", "候補なし", "OK", "PASS"}
 
@@ -145,15 +167,17 @@ def visible_text(raw: str) -> str:
     return html.unescape("".join(line.strip() for line in text.splitlines())).strip()
 
 
-def wording_blocks(text: str) -> list[dict]:
+def wording_blocks(text: str, *, include_quotes: bool = False) -> list[dict]:
     """行番号を維持し、本文・見出し・吹き出しから表示文を抽出する。"""
     def blank(match):
         return re.sub(r"[^\n]", " ", match.group(0))
 
     source = re.sub(r"\A---[^\n]*\n.*?^---[^\n]*(?:\n|$)", blank, text, flags=re.M | re.S)
     source = re.sub(r"^[ \t]*(`{3,}|~{3,})[^\n]*\n.*?^[ \t]*\1[^\n]*(?:\n|$)", blank, source, flags=re.M | re.S)
-    source = re.sub(r"<!--.*?-->|\{/\*.*?\*/\}|<blockquote\b[^>]*>.*?</blockquote>", blank, source, flags=re.S | re.I)
-    source = re.sub(r"^[ \t]*>[^\n]*(?:\n|$)", blank, source, flags=re.M)
+    source = re.sub(r"<!--.*?-->|\{/\*.*?\*/\}", blank, source, flags=re.S)
+    if not include_quotes:
+        source = re.sub(r"<blockquote\b[^>]*>.*?</blockquote>", blank, source, flags=re.S | re.I)
+        source = re.sub(r"^[ \t]*>[^\n]*(?:\n|$)", blank, source, flags=re.M)
     source = re.sub(r"`+[^`\n]*`+", blank, source)
     blocks = []
     for match in re.finditer(r"\S[\s\S]*?(?=\n[ \t]*\n|\Z)", source):
@@ -187,25 +211,40 @@ def wording_candidates(text: str) -> list[dict]:
     return candidates
 
 
+def intro_context(text: str) -> list[dict]:
+    """導入を引用符で除外せず収録。前提・後続文の意味は担当者が判断する。"""
+    def blank(match):
+        return re.sub(r"[^\n]", " ", match.group(0))
+    # 除外部分も文字位置を保持し、本文最初のH2だけで区切る。
+    source = re.sub(r"\A---[^\n]*\n.*?^---[^\n]*(?:\n|$)", blank, text, flags=re.M | re.S)
+    source = re.sub(r"^[ \t]*(`{3,}|~{3,})[^\n]*\n.*?^[ \t]*\1[^\n]*(?:\n|$)", blank, source, flags=re.M | re.S)
+    source = re.sub(r"<!--.*?-->|\{/\*.*?\*/\}", blank, source, flags=re.S)
+    heading = re.search(r"^##[ \t]+", source, flags=re.M)
+    return wording_blocks(text[:heading.start()] if heading else text, include_quotes=True)
+
+
 def make_wording_review(text: str) -> dict:
     """未判定の雛形だけを生成する。候補0件でも全文の意味確認は別途必要。"""
     return {
-        "schema_version": 1,
+        "schema_version": 2,
+        "intro_context": intro_context(text),
         "article_sha256": hashlib.sha256(text.encode()).hexdigest(),
         "rules_sha256": wording_fingerprint(),
         "candidates": [dict(c, decision="pending", reason="") for c in wording_candidates(text)],
         "changes": [],
         "full_text_review": {
             "scopes": [],
-            "checks": {rule: {"status": "pending", "detail": ""} for rule in WORDING_RULES},
+            "checks": {rule: {"status": "pending", "detail": ""} for rule in REVIEW_CHECKS},
         },
     }
 
 
 def validate_wording_review(text: str, review: dict) -> list[str]:
-    errors = []
-    if not isinstance(review, dict) or review.get("schema_version") != 1:
-        return ["文章表現レビューのschema_versionが不正です"]
+    errors = check_source_names(text)
+    if not isinstance(review, dict) or review.get("schema_version") != 2:
+        return errors + ["文章表現レビューのschema_versionが不正です。現行の雛形で再確認してください"]
+    if review.get("intro_context") != intro_context(text):
+        errors.append("導入全文の記録が現行原稿と一致しません。カギ括弧内も含めて再確認してください")
     if review.get("article_sha256") != hashlib.sha256(text.encode()).hexdigest():
         errors.append("原稿がレビュー後に変更されています。最新原稿を再確認してください")
     if review.get("rules_sha256") != wording_fingerprint():
@@ -235,7 +274,7 @@ def validate_wording_review(text: str, review: dict) -> list[str]:
     checks = full.get("checks", {})
     if not isinstance(checks, dict):
         return errors + ["全文確認のchecksがありません"]
-    for rule in WORDING_RULES:
+    for rule in REVIEW_CHECKS:
         check = checks.get(rule, {})
         if not isinstance(check, dict):
             errors.append(f"{rule}: 全文確認の記録が不正です")

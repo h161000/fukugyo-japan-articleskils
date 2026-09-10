@@ -57,6 +57,6 @@ Gateは必読パス・記録形式・成果物の存在・証跡の変更を検�
 
 ## 文章表現の横断レビューの追加検査
 
-`wording-review`は`editorial-review.json`を証跡にする。正本の作成方法・記録項目は`fukugyojapan-editorial-rules.md`の「文章表現の横断レビュー」。review工程の完了時とpublish工程への移行・完了時に、候補抽出を現行原稿へ再実行し、原稿とルールのハッシュ、現在の候補一覧、残す理由、修正後の文、全範囲・5観点の確認を検証する。statusだけのpass、空の証跡、候補の間引き、旧原稿の判定流用では完了できない。
+`wording-review`は`editorial-review.json`を証跡にする。正本の作成方法・記録項目は`fukugyojapan-editorial-rules.md`の「文章表現の横断レビュー」。review工程の完了時とpublish工程への移行・完了時に、候補抽出を現行原稿へ再実行し、原稿とルールのハッシュ、現在の候補一覧、残す理由、修正後の文、全範囲・既存5観点・追加3観点（`intro-premise`・`intro-connection`・`source-naming`）と`intro_context`の現行原稿との一致を検証する。既知の第三者レビューサイト名が公開原稿に残る場合もFAILとする。statusだけのpass、空の証跡、候補の間引き、旧原稿の判定流用では完了できない。
 
 導入だけでなく、見出し・本文・吹き出し・相談案内・締めを確認し、意味が変わらないことと前後の接続をreview-reportにも残す。機械検出0件は全文レビュー実施の証明ではない。既存記事の工程記録にwording-reviewがない場合、過去の合格を自動補完せず、次に当該工程を実行するときに現行原稿を確認して記録する。
