@@ -14,12 +14,12 @@ description: 副業JAPAN向けの新規SEO検証記事を、iHubのtask ID・サ
 優先順位は次のとおり。
 
 1. ユーザーの今回の指示
-2. `references/character-workflow.md`、`references/eyecatch-rules.md`、`references/line-cta.md`のキャラ・アイキャッチ・CTA表示仕様と、`references/fukugyojapan-editorial-rules.md`の文章・キャプション仕様
+2. `references/character-workflow.md`、`references/eyecatch-rules.md`、`references/line-cta.md`のキャラ・アイキャッチ・CTA表示仕様と、`references/fukugyojapan-editorial-rules.md`の文章・証拠画像・キャプション仕様
 3. `references/seo-site-skills/`に同梱した正本
 4. `references/fukugyojapan-adapter.md`の副業JAPAN接続仕様
 5. `references/publish-workflow.md`の表示・公開仕様
 
-同梱した正本を要約や記憶で置き換えない。副業JAPAN固有処理は、iHub入出力、フジ、CTA画像、アイキャッチ、Astroサイトへの配置、表示・公開、`fukugyojapan-editorial-rules.md`に明記した文章・画像キャプションだけとする。記事の調査・KW・構成・本文・文体・CTA文言・品質基準は、副業JAPAN固有ルールが明示的に上書きする箇所以外、正本に従う。
+同梱した正本を要約や記憶で置き換えない。副業JAPAN固有処理は、iHub入出力、フジ、CTA画像、アイキャッチ、Astroサイトへの配置、表示・公開、`fukugyojapan-editorial-rules.md`に明記した文章・証拠画像・画像キャプションだけとする。記事の調査・KW・構成・本文・文体・CTA文言・品質基準は、副業JAPAN固有ルールが明示的に上書きする箇所以外、正本に従う。
 
 実行時に`/Users/hirototakada/SEO/seo-site-skills`を参照しない。コピー元の別スキルや他サイトの既存記事の制作ルールも上位ルールとして使わない。
 
@@ -37,7 +37,7 @@ description: 副業JAPAN向けの新規SEO検証記事を、iHubのtask ID・サ
 | research | 同梱research-agent、同references/ad-keywords | 調査根拠・未確認事項・Ahrefs結果・メインKWを保存 |
 | cta | 同梱line-cvr、型決定後にclosing-templates、writing-examples | 型番号・判定KW・読者状態をoutlineとreview-reportへ記録 |
 | writing | 同梱writing-agent、同referencesのarticle-types・ng-words・mdx-components・human-voice、docs/design-guide、critic、フジのペルソナ、line-cta | 構成と根拠に対応したAstro MDXを作成 |
-| images | 同梱article-evidence-image-capture、eyecatch-rules、同資料が指定する専用スキルと画像生成スキル | 証拠画像・出典・配置・alt・アイキャッチを完成 |
+| images | editorial-rules、同梱article-evidence-image-capture、eyecatch-rules、同資料が指定する専用スキルと画像生成スキル | 赤枠のみの証拠画像・出典・配置・alt・アイキャッチを完成 |
 | review | 同梱critic・seo-eeat-check・competitor-check、ペルソナ、publish-workflow | 指摘反映・全必須検査・375px表示確認を完了 |
 | publish | publish-workflow（本番公開の依頼時のみ工程実行） | 本番・画像・サイトマップ確認後にiHubのarticleUrlだけ更新 |
 
@@ -114,7 +114,7 @@ CTA文言は`line-cvr`へ従い、表示には現在の副業JAPANの共通画�
 
 CTAは`ArticleLayout.astro`と`Balloon.astro`に自動表示を任せる。記事MDXには`LineButton`やCTA画像・リンクを手書きしない。最後のH2内は記事内容に合わせたフジの締めを作り、その後の画像CTAは既存の`ArticleBottomLine`で表示する。導入後・最初のH2末尾・吹き出し後の条件と検査は`references/line-cta.md`に従う。
 
-画像は同梱正本の優先順位、証拠性、注釈、alt、寸法と`fukugyojapan-editorial-rules.md`の公開キャプション仕様に従う。
+記事内の証拠画像は、`references/fukugyojapan-editorial-rules.md`の「記事内の証拠画像は赤枠のみ」を優先する。同梱writing-agentの見出し帯・番号・注釈文を必須にする指示と`annotate_shot.py`による注釈追加処理は、このスキルでは適用しない。取得・切り出し・赤枠・WebP化は同梱article-evidence-image-captureに従い、本文との対応・alt・寸法・公開キャプションを確認する。
 
 アイキャッチは`references/eyecatch-rules.md`に従い、`seo-article-to-mdx`と同じ専用スキル`create-seo-fuji-eyecatch`で作成する。生成り×朱赤×チャコールのデザイン、素材選定、保存、frontmatter、検査を同スキルへ委ねる。本文制作はこのスキルのフローを維持し、アイキャッチの入出力は参照ファイルの接続手順で同期する。
 
@@ -130,7 +130,7 @@ CTAは`ArticleLayout.astro`と`Balloon.astro`に自動表示を任せる。記�
 4. `python3 /Users/hirototakada/.codex/skills/fukugyojapanarticle/scripts/check_fukugyojapan_editorial.py src/content/articles/<slug>.mdx --review <ARTICLEWORK>/editorial-review.json`（雛形作成・判定は文章ルールの「文章表現の横断レビュー」に従う）
 5. 同梱`references/seo-site-skills/check-article.sh`（副業JAPANのサイトルートから実行）
 6. 同梱`references/seo-site-skills/skills/scripts/check-line-cv.sh`
-7. 同梱`references/seo-site-skills/skills/scripts/check-images.sh`
+7. 同梱`references/seo-site-skills/skills/scripts/check-images.sh`と、全証拠画像の赤枠のみの目視確認（画像ルールに従い、追加の帯・番号・説明文・矢印がないことを確認）
 8. E-E-A-Tチェック
 9. 競合文章一致チェック
 10. Astro MDXコンパイルとローカルビルド

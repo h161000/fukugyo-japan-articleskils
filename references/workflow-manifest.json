@@ -67,6 +67,7 @@
   },
   "images": {
     "reads": [
+      "references/fukugyojapan-editorial-rules.md",
       "references/seo-site-skills/skills/article-evidence-image-capture/SKILL.md",
       "references/eyecatch-rules.md",
       "/Users/hirototakada/.agents/skills/create-seo-fuji-eyecatch/SKILL.md",
